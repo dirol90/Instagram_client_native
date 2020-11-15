@@ -4,7 +4,7 @@ import android.preference.PreferenceManager
 
 object AppSharedPreferences {
 
-    final const val CUSTOM_PREF = "my_prefs"
+    const val CUSTOM_PREF = "my_prefs"
 
     fun defaultPrefs(context: Context): SharedPreferences =
         PreferenceManager.getDefaultSharedPreferences(context)

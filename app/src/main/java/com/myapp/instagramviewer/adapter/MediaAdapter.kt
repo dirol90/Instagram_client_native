@@ -20,7 +20,7 @@ import com.myapp.instagramviewer.viewmodel.AppViewModel
 class MediaAdapter(private val viewModel: AppViewModel) : RecyclerView.Adapter<MediaHolder>() {
     private var currentResults: List<InstagramMediaInfoEntity> = listOf()
 
-    fun setData(currentResults: List<InstagramMediaInfoEntity>){
+    fun setData(currentResults: List<InstagramMediaInfoEntity>) {
         this.currentResults = currentResults
     }
 
@@ -45,6 +45,6 @@ class MediaAdapter(private val viewModel: AppViewModel) : RecyclerView.Adapter<M
             parent,
             false
         )
-        return MediaHolder(cardItem, width/2, viewModel)
+        return MediaHolder(cardItem, width / 2, viewModel)
     }
 }

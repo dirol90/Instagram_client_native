@@ -36,11 +36,11 @@ class FragmentMediaDetailed(private val viewModel: AppViewModel) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-            Glide.with(view.context)
-                .load(viewModel.getSelectedMedia()?.imagePath)
-                .placeholder(R.drawable.placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop()
-                .into(iv_media_detailed)
+        Glide.with(view.context)
+            .load(viewModel.getSelectedMedia()?.imagePath)
+            .placeholder(R.drawable.placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .centerCrop()
+            .into(iv_media_detailed)
     }
 }

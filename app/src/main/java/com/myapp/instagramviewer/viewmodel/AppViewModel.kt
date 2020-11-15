@@ -23,13 +23,14 @@ class AppViewModel : ViewModel() {
 
     fun getData(str: String?): LiveData<List<InstagramMediaInfoEntity>>? {
         var searchPhrase = str
-        if (searchPhrase == null || searchPhrase.isEmpty()){
-            searchPhrase = "instagram"}
+        if (searchPhrase == null || searchPhrase.isEmpty()) {
+            searchPhrase = "instagram"
+        }
 
         return loadData(searchPhrase)
     }
 
-    fun setSelectedMedia(obj: InstagramMediaInfoEntity){
+    fun setSelectedMedia(obj: InstagramMediaInfoEntity) {
         selectedMedia = obj
     }
 
@@ -37,11 +38,11 @@ class AppViewModel : ViewModel() {
         return selectedMedia
     }
 
-    private fun loadData(str: String) : LiveData<List<InstagramMediaInfoEntity>>? {
+    private fun loadData(str: String): LiveData<List<InstagramMediaInfoEntity>>? {
         return appRepository?.parseWebPageWithEndpoint(str)
     }
 
-    private fun deleteData(str: String) : LiveData<List<InstagramMediaInfoEntity>>? {
+    private fun deleteData(str: String): LiveData<List<InstagramMediaInfoEntity>>? {
         return appRepository?.removeAllMedia(str)
     }
 }

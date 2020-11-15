@@ -82,7 +82,7 @@ class JsoupWebParser {
                     "(function(){ " +
                             "document.getElementsByClassName('tCibT qq7_A  z4xUb w5S7h')[0].click();})();"
                 ) {}
-                    scrollToBottom(webView)
+                scrollToBottom(webView)
             }
             Handler(Looper.getMainLooper()).postDelayed({
                 doStaff(webView)
@@ -137,7 +137,7 @@ class JsoupWebParser {
                             }
                             lastParsedCountElementsValue = element.size
                         }
-                        if (!isEnd){
+                        if (!isEnd) {
                             prepareFun()
                         }
                     }

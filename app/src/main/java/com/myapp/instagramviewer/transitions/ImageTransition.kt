@@ -12,10 +12,8 @@ class ImageTransition : TransitionSet() {
     init {
         ordering = ORDERING_TOGETHER
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            addTransition(ChangeBounds()).
-            addTransition(ChangeTransform()).
-            addTransition(ChangeImageTransform()).
-                    setDuration(1000)
+            addTransition(ChangeBounds()).addTransition(ChangeTransform())
+                .addTransition(ChangeImageTransform()).setDuration(1000)
         }
     }
 }

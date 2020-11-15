@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.myapp.instagramviewer.MyApp
 import com.myapp.instagramviewer.R
@@ -110,7 +109,7 @@ class FragmentMediaGrid(private val viewModel: AppViewModel) : Fragment() {
         })
     }
 
-    private fun progressStart(mediaAdapter: MediaAdapter){
+    private fun progressStart(mediaAdapter: MediaAdapter) {
         pr_bar.visibility = View.VISIBLE
 
         data?.removeObservers(viewLifecycleOwner)
@@ -154,7 +153,7 @@ class FragmentMediaGrid(private val viewModel: AppViewModel) : Fragment() {
         recyclerScrollToPos()
     }
 
-    private fun recyclerScrollToPos(){
+    private fun recyclerScrollToPos() {
         val lastPos: Int? = AppSharedPreferences.customPrefs(
             MyApp.context,
             AppSharedPreferences.CUSTOM_PREF
@@ -162,7 +161,7 @@ class FragmentMediaGrid(private val viewModel: AppViewModel) : Fragment() {
         lastPos?.let { rv_grid.scrollToPosition(it) }
     }
 
-    private fun recyclerClearPos(){
+    private fun recyclerClearPos() {
         AppSharedPreferences.customPrefs(
             MyApp.context,
             AppSharedPreferences.CUSTOM_PREF
@@ -172,7 +171,7 @@ class FragmentMediaGrid(private val viewModel: AppViewModel) : Fragment() {
         )?.apply()
     }
 
-    private fun recyclerSavePos(position: Int){
+    private fun recyclerSavePos(position: Int) {
         AppSharedPreferences.customPrefs(
             MyApp.context,
             AppSharedPreferences.CUSTOM_PREF

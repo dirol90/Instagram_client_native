@@ -11,8 +11,8 @@ import com.myapp.instagramviewer.repository.AppDatabase
 
 class MyApp : Application() {
     companion object {
-        lateinit var context : Context
-        lateinit var instance : MyApp
+        lateinit var context: Context
+        lateinit var instance: MyApp
     }
 
     private var database: AppDatabase? = null

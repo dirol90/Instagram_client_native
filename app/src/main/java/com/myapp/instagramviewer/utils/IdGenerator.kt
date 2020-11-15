@@ -10,9 +10,9 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
-class IdGenerator(val key: String) {
+class IdGenerator(private val key: String) {
 
-    fun generateIdFromStringValue () : String{
+    fun generateIdFromStringValue(): String {
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
         val spec: KeySpec = PBEKeySpec(key.toCharArray(), "salt".toByteArray(), 65536, 256)
         val tmp: SecretKey = factory.generateSecret(spec)
