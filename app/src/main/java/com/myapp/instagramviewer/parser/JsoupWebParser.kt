@@ -86,7 +86,7 @@ class JsoupWebParser {
             }
             Handler(Looper.getMainLooper()).postDelayed({
                 doStaff(webView)
-            }, 3000)
+            }, 1000)
         }
     }
 
@@ -116,10 +116,10 @@ class JsoupWebParser {
                     viewModelScope.launch(Dispatchers.IO) {
                         if (!isEnd) {
                             for (i in lastParsedCountElementsValue until element.size) {
-                                if (element[i].attr(
-                                        "class"
-                                    ).equals("FFVAD")
-                                )
+                                if (element[i].attr("src").toString().isNotEmpty()
+                                    && element[i].attr("class").toString().isNotEmpty()
+                                    && element[i].attr("class").toString() == "FFVAD"
+                                ) {
                                     println("Adding to DB $webPagePath ${element[i].attr("src")}")
                                     employeeDao?.insert(
                                         ModelEntityConverter.convertModelToEntity(
@@ -128,11 +128,12 @@ class JsoupWebParser {
                                                 webPagePath!!,
                                                 element[i].attr("src"),
                                                 element[i].attr("alt"),
-                                                10,
-                                                10
+                                                0,
+                                                0
                                             )
                                         )
                                     )
+                                }
                             }
                             lastParsedCountElementsValue = element.size
                         }

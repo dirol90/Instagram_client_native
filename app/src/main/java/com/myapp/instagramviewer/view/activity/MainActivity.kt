@@ -13,21 +13,33 @@ import com.myapp.instagramviewer.viewmodel.AppViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var videModel: AppViewModel
+    private val viewModel: AppViewModel by lazy { ViewModelProvider(this).get(AppViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        videModel = ViewModelProvider(this).get(AppViewModel::class.java)
-        addFragmentToActivity(supportFragmentManager, FragmentMediaGrid(videModel), R.id.fl_placeholder)
 
+        addFragmentToActivity(
+            supportFragmentManager,
+            FragmentMediaGrid(viewModel),
+            R.id.fl_placeholder
+        )
     }
 
     private fun addFragmentToActivity(manager: FragmentManager, fragment: Fragment, frameId: Int) {
         val transaction: FragmentTransaction = manager.beginTransaction()
         transaction.add(frameId, fragment)
-        transaction.addToBackStack(FragmentManager::class.simpleName)
+        transaction.addToBackStack(null)
         transaction.commit()
+    }
+
+    override fun onBackPressed() {
+        val fragmentManager: FragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 1) {
+            fragmentManager.popBackStackImmediate()
+        } else {
+            super.onBackPressed()
+        }
     }
 
 }

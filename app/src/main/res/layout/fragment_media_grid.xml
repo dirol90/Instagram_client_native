@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".view.activity.MainActivity">
 
+    <com.myapp.instagramviewer.view.custom.ObservableWebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_grid"
         android:layout_width="0dp"
@@ -13,12 +19,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_hidable_with_et" />
-
-    <com.myapp.instagramviewer.view.custom.ObservableWebView
-        android:id="@+id/web_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible" />
 
     <!--    View for testing-->
 
@@ -53,7 +53,8 @@
             android:hint="@string/et_hint"
             android:inputType="textPersonName"
             android:textColorHighlight="@color/mainHintColor"
-            android:textColorHint="@color/mainHintColor" />
+            android:textColorHint="@color/mainHintColor"
+            android:imeOptions="actionDone"/>
 
         <ImageView
             android:id="@+id/iv_close_clean_action"

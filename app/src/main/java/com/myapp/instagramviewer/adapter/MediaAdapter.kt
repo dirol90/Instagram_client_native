@@ -30,8 +30,7 @@ class MediaAdapter(private val viewModel: AppViewModel) : RecyclerView.Adapter<M
 
     override fun onBindViewHolder(holder: MediaHolder, position: Int) {
         val page = currentResults[position]
-        page.let { holder.updateWithMedia(it)
-        }
+        page.let { holder.updateWithMedia(it, position) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder {

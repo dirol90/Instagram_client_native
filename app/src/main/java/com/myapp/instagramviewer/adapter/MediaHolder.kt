@@ -11,17 +11,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.myapp.instagramviewer.MyApp
 import com.myapp.instagramviewer.R
 import com.myapp.instagramviewer.repository.entity.InstagramMediaInfoEntity
 import com.myapp.instagramviewer.view.fragment.FragmentMediaDetailed
 import com.myapp.instagramviewer.viewmodel.AppViewModel
+import kotlinx.android.synthetic.main.fragment_media_grid.*
 
 
 class MediaHolder(itemView: View, private val imageWidth: Int, private val viewModel: AppViewModel) : RecyclerView.ViewHolder(itemView) {
-    private val articleImageView: ImageView = itemView.findViewById<ImageView>(R.id.iv_media)
+    private val articleImageView: ImageView = itemView.findViewById(R.id.iv_media)
     private var currentPage: InstagramMediaInfoEntity? = null
 
-    fun updateWithMedia(media: InstagramMediaInfoEntity){
+    fun updateWithMedia(media: InstagramMediaInfoEntity, position: Int ){
         currentPage = media
 
         Glide.with(itemView.context)
@@ -39,7 +41,19 @@ class MediaHolder(itemView: View, private val imageWidth: Int, private val viewM
             viewModel.setSelectedMedia(currentPage!!)
 
             activity.supportFragmentManager.beginTransaction().replace(R.id.fl_placeholder, newFragment).addToBackStack(null).commit()
+
+            recyclerSavePos(position)
         }
+    }
+
+    private fun recyclerSavePos(position: Int){
+        AppSharedPreferences.customPrefs(
+            MyApp.context,
+            AppSharedPreferences.CUSTOM_PREF
+        ).edit()?.putInt(
+            "lastPos",
+            position
+        )?.apply()
     }
 }
 
