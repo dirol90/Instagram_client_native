@@ -5,28 +5,28 @@ package com.myapp.instagramviewer.repository.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.myapp.instagramviewer.repository.entity.InstagraMediaInfoEntity
+import com.myapp.instagramviewer.repository.entity.InstagramMediaInfoEntity
 
 @Dao
 interface InstagramMediaDao {
-    @get:Query("SELECT * FROM instagramediainfoentity")
-    val all: LiveData<List<InstagraMediaInfoEntity>>
+    @get:Query("SELECT * FROM instagrammediainfoentity")
+    val all: LiveData<List<InstagramMediaInfoEntity>>
 
-    @Query("SELECT * FROM instagramediainfoentity WHERE id = :id")
-    fun getById(id: String): LiveData<List<InstagraMediaInfoEntity>>
+    @Query("SELECT * FROM instagrammediainfoentity WHERE id = :id")
+    fun getById(id: String): LiveData<List<InstagramMediaInfoEntity>>
 
-    @Query("SELECT * FROM instagramediainfoentity WHERE pageId = :pageId")
-    fun getByPageId(pageId: String): LiveData<List<InstagraMediaInfoEntity>>
+    @Query("SELECT * FROM instagrammediainfoentity WHERE pageId = :pageId")
+    fun getByPageId(pageId: String): LiveData<List<InstagramMediaInfoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(employee: InstagraMediaInfoEntity)
+    fun insert(instagramMediaInfoEntity: InstagramMediaInfoEntity)
 
     @Update
-    fun update(employee: InstagraMediaInfoEntity)
+    fun update(instagramMediaInfoEntity: InstagramMediaInfoEntity)
 
     @Delete
-    fun delete(employee: InstagraMediaInfoEntity)
+    fun delete(instagramMediaInfoEntity: InstagramMediaInfoEntity)
 
-    @Query("DELETE FROM instagramediainfoentity")
+    @Query("DELETE FROM instagrammediainfoentity")
     fun deleteAll()
 }

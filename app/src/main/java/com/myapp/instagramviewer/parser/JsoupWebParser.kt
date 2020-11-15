@@ -3,113 +3,142 @@
  */
 package com.myapp.instagramviewer.parser
 
-import android.graphics.Bitmap
 import android.os.Handler
-import android.webkit.*
-import com.myapp.instagramviewer.MyApp
+import android.os.Looper
+import android.webkit.CookieManager
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import com.myapp.instagramviewer.model.InstagramMediaDataModel
 import com.myapp.instagramviewer.repository.AppRepository.Companion.employeeDao
-import com.myapp.instagramviewer.repository.entity.InstagraMediaInfoEntity
+import com.myapp.instagramviewer.repository.entity.InstagramMediaInfoEntity
 import com.myapp.instagramviewer.utils.IdGenerator
+import com.myapp.instagramviewer.utils.ModelEntityConverter
+import com.myapp.instagramviewer.view.fragment.FragmentMediaGrid.Companion.webView
 import com.myapp.instagramviewer.viewmodel.AppViewModel.Companion.viewModelScope
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import java.lang.Thread.sleep
+import java.sql.Time
+import java.util.*
 
 class JsoupWebParser {
 
-    companion object {
-        private var jsoupWebParser: JsoupWebParser? = null
-        private var webPagePath: String? = null
+    private var prevScrollYPos = 0
+    private var isEnd = false
+    private var lastParsedCountElementsValue = 0
+    private var webPagePath: String? = null
+    private var timer: Timer? = null
+
+    fun start(webPagePath: String) {
+        if (timer == null) {
+            this.webPagePath = webPagePath
+            println("Running Parser")
+            getChildrenFromWebPage()
+        }
     }
 
-    fun newInstance(path: String): JsoupWebParser? {
-        if (jsoupWebParser == null) jsoupWebParser = JsoupWebParser()
-        webPagePath = path
-        return jsoupWebParser
-    }
-
-    fun run(): JsoupWebParser? {
-        getChildrenFromWebPage()
-        return jsoupWebParser
+    fun stop() {
+        webPagePath = ""
+        isEnd = true
     }
 
     private fun getChildrenFromWebPage() {
+        prevScrollYPos = 0
+        lastParsedCountElementsValue = 0
 
-        val webView = WebView(MyApp.context)
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
-        } else {
-            CookieManager.getInstance().setAcceptCookie(true)
-        }
+        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
         val set: WebSettings = webView.settings
         set.userAgentString =
             "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
         set.javaScriptEnabled = true
         set.domStorageEnabled = true
-        set.loadsImagesAutomatically = true
+        set.loadsImagesAutomatically = false
         set.builtInZoomControls = false
         set.useWideViewPort = true
         set.loadWithOverviewMode = true
+        set.blockNetworkImage = true
 
         webView.loadUrl("${webPagePath!!}/")
+        println("Running ${webPagePath!!}/")
 
+        var runFunOnce = false
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
-//                view.loadUrl("javascript:(function(){"+
-//                        "l=document.getElementById('tCibT qq7_A  z4xUb w5S7h');"+
-//                        "e=document.createEvent('HTMLEvents');"+
-//                        "e.initEvent('click',true,true);"+
-//                        "l.dispatchEvent(e);"+
-//                        "})()")
-                Handler().postDelayed(
-                    {
-                        view.evaluateJavascript(
-                            "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();"
-                        ) {
-                            val response = it.replace("\\u003C", "<")
-                                .replaceFirst("\"", "")
-                                .replace("\\\"", "\"")
-                                .replace("\\n", "")
-                                .replace("\\\\u0302", "^")
-                                .replace("\\\\u0026", "&")
-                                .replace("\\\\", "")
-                                .replace("        ", " ")
-                                .replace(" \"", "")
-                                .dropLast(1)
-                            val responseInString = Jsoup.parse(response)
-
-                            getMediaFromChildren(responseInString)
-
-                        }
-                    },
-                    2000 // value in milliseconds
-                )
-
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                println(url)
+                if (!runFunOnce) {
+                    runFunOnce = true
+                    prepareFun()
+                    println("Running Prepare fun")
+                }
             }
         }
     }
 
+    private fun prepareFun() {
+        if (!isEnd) {
+            Handler(Looper.getMainLooper()).post {
+                webView.evaluateJavascript(
+                    "(function(){ " +
+                            "document.getElementsByClassName('tCibT qq7_A  z4xUb w5S7h')[0].click();})();"
+                ) {}
+                    scrollToBottom(webView)
+            }
+            Handler(Looper.getMainLooper()).postDelayed({
+                doStaff(webView)
+            }, 3000)
+        }
+    }
 
-    private fun getMediaFromChildren(baseChildrenDocument: Document?) {
-        baseChildrenDocument?.let {
-            var element = it.getElementsByTag("img")
+    private fun scrollToBottom(view: WebView) {
+        prevScrollYPos += 500
+        view.scrollTo(1, prevScrollYPos)
+        prevScrollYPos
+    }
 
-            if(element.hasAttr("alt")) {
-                println(element.toString())
-                viewModelScope.launch(Dispatchers.IO) {
-                    element.forEach {
-                        if (it.attr("src").isNotEmpty())
-                            employeeDao?.insert(InstagraMediaInfoEntity(IdGenerator(it.attr("src")).generateIdFromStringValue(),
-                                webPagePath!!,
-                                it.attr("src"),
-                                10,
-                                10
-                            ))
+    private fun doStaff(view: WebView) {
+        view.evaluateJavascript("(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();") {
+            val response = it.replace("\\u003C", "<")
+                .replaceFirst("\"", "")
+                .replace("\\\"", "\"")
+                .replace("\\n", "")
+                .replace("\\\\u0302", "^")
+                .replace("\\\\u0026", "&")
+                .replace("\\\\", "")
+                .replace("        ", " ")
+                .replace(" \"", "")
+                .dropLast(1)
+
+            Jsoup.parse(response)?.let {
+                val element = it.getElementsByTag("img")
+
+                if (element.hasAttr("alt") && element.hasClass("FFVAD")) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        if (!isEnd) {
+                            for (i in lastParsedCountElementsValue until element.size) {
+                                if (element[i].attr(
+                                        "class"
+                                    ).equals("FFVAD")
+                                )
+                                    println("Adding to DB $webPagePath ${element[i].attr("src")}")
+                                    employeeDao?.insert(
+                                        ModelEntityConverter.convertModelToEntity(
+                                            InstagramMediaDataModel(
+                                                IdGenerator(element[i].attr("src")).generateIdFromStringValue(),
+                                                webPagePath!!,
+                                                element[i].attr("src"),
+                                                element[i].attr("alt"),
+                                                10,
+                                                10
+                                            )
+                                        )
+                                    )
+                            }
+                            lastParsedCountElementsValue = element.size
+                        }
+                        if (!isEnd){
+                            prepareFun()
+                        }
                     }
                 }
             }

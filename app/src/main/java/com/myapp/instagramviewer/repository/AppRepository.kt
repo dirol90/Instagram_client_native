@@ -7,36 +7,37 @@ import androidx.lifecycle.LiveData
 import com.myapp.instagramviewer.MyApp
 import com.myapp.instagramviewer.parser.JsoupWebParser
 import com.myapp.instagramviewer.repository.dao.InstagramMediaDao
-import com.myapp.instagramviewer.repository.entity.InstagraMediaInfoEntity
+import com.myapp.instagramviewer.repository.entity.InstagramMediaInfoEntity
 import com.myapp.instagramviewer.viewmodel.AppViewModel.Companion.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-
 
 class AppRepository {
 
     companion object {
-        private var appRepository : AppRepository? = null
-        var db: AppDatabase? = MyApp.instance.getInstance()?.getDatabase()
-        var employeeDao: InstagramMediaDao? = db!!.instagraMediaInfoDao()
+        private var appRepository: AppRepository? = null
+        private var db: AppDatabase? = MyApp.instance.getInstance()?.getDatabase()
+        var employeeDao: InstagramMediaDao? = db?.instagraMediaInfoDao()
     }
 
-    private val baseUrl : String = "https://www.instagram.com/"
+    private var jsoup: JsoupWebParser? = null
+    private val baseUrl: String = "https://www.instagram.com/"
 
-    fun newInstance(): AppRepository ? {
+    fun newInstance(): AppRepository? {
         if (appRepository == null) appRepository = AppRepository()
         return appRepository
     }
 
-    fun parseWebPageWithEndpoint(endpoint: String) : LiveData<List<InstagraMediaInfoEntity>>?{
-        JsoupWebParser().newInstance(baseUrl + endpoint)?.run()
-        return employeeDao?.let { it.all }
+    fun parseWebPageWithEndpoint(endpoint: String): LiveData<List<InstagramMediaInfoEntity>>? {
+        jsoup?.stop()
+        jsoup = JsoupWebParser()
+        jsoup?.start(baseUrl + endpoint)
+
+        return employeeDao?.getByPageId("$baseUrl$endpoint")
     }
 
-    fun removeAllMedia() : LiveData<List<InstagraMediaInfoEntity>>?{
-        viewModelScope.launch(Dispatchers.IO) { employeeDao?.deleteAll() }
-        return employeeDao?.let { it.all }
+    fun removeAllMedia(endpoint: String): LiveData<List<InstagramMediaInfoEntity>>? {
+        viewModelScope.launch(Dispatchers.Default) { employeeDao?.deleteAll() }
+        return employeeDao?.getByPageId("$baseUrl$endpoint")
     }
 }

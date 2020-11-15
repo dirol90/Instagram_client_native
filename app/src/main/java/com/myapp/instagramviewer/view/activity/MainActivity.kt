@@ -12,13 +12,14 @@ import com.myapp.instagramviewer.viewmodel.AppViewModel
 
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var videModel: AppViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         videModel = ViewModelProvider(this).get(AppViewModel::class.java)
-        addFragmentToActivity(supportFragmentManager, FragmentMediaGrid(), R.id.fl_placeholder)
+        addFragmentToActivity(supportFragmentManager, FragmentMediaGrid(videModel), R.id.fl_placeholder)
 
     }
 

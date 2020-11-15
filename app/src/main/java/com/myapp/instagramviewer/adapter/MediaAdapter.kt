@@ -9,18 +9,19 @@ import android.view.Display
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.myapp.instagramviewer.MyApp.Companion.context
+import com.myapp.instagramviewer.MyApp
 import com.myapp.instagramviewer.R
-import com.myapp.instagramviewer.repository.entity.InstagraMediaInfoEntity
+import com.myapp.instagramviewer.repository.entity.InstagramMediaInfoEntity
+import com.myapp.instagramviewer.viewmodel.AppViewModel
 
 
-class MediaAdapter() : RecyclerView.Adapter<MediaHolder>() {
-    var currentResults: List<InstagraMediaInfoEntity> = listOf()
+class MediaAdapter(private val viewModel: AppViewModel) : RecyclerView.Adapter<MediaHolder>() {
+    private var currentResults: List<InstagramMediaInfoEntity> = listOf()
 
-    fun setData(currentResults: List<InstagraMediaInfoEntity>){
+    fun setData(currentResults: List<InstagramMediaInfoEntity>){
         this.currentResults = currentResults
-        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
@@ -28,22 +29,23 @@ class MediaAdapter() : RecyclerView.Adapter<MediaHolder>() {
     }
 
     override fun onBindViewHolder(holder: MediaHolder, position: Int) {
-        var page = currentResults.get(position)
-        page.let { holder.updateWithMedia(it) }
+        val page = currentResults[position]
+        page.let { holder.updateWithMedia(it)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder {
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        val wm = MyApp.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display: Display = wm.defaultDisplay
         val size = Point()
         display.getSize(size)
         val width: Int = size.x
-
-        var cardItem = LayoutInflater.from(parent.context).inflate(
+        val cardItem = LayoutInflater.from(parent.context).inflate(
             R.layout.card_media,
             parent,
             false
         )
-        return MediaHolder(cardItem, width/2)
+        return MediaHolder(cardItem, width/2, viewModel)
     }
 }
