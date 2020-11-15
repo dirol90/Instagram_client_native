@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             fragmentManager.popBackStackImmediate()
         } else {
             super.onBackPressed()
+            super.onBackPressed()
         }
     }
 
