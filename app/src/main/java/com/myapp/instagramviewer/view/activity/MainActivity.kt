@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.myapp.instagramviewer.R
 import com.myapp.instagramviewer.view.fragment.FragmentMediaGrid
+import com.myapp.instagramviewer.view.fragment.FragmentPathSelector
 import com.myapp.instagramviewer.viewmodel.AppViewModel
 
 
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         addFragmentToActivity(
             supportFragmentManager,
-            FragmentMediaGrid(viewModel),
+            FragmentPathSelector(viewModel),
             R.id.fl_placeholder
         )
     }
